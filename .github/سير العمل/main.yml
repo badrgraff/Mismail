@@ -1,0 +1,21 @@
+الاسم: CI
+تشغيل: [push، workflow_dispatch]
+وظائف:
+  يبني:
+    يعمل على: windows-latest
+    خطوات:
+    - الاسم: تحميل
+      تشغيل: Invoke-WebRequest https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-windows-amd64.zip -OutFile ngrok.zip
+    - الاسم: استخراج
+      تشغيل: توسيع الأرشيف ngrok.zip
+    - الاسم: Auth
+      تشغيل:. \ ngrok \ ngrok.exe المصادقة $ Env: NGROK_AUTH_TOKEN
+      env:
+        NGROK_AUTH_TOKEN: $ {{secrets.NGROK_AUTH_TOKEN}}
+    - الاسم: تمكين TS
+      تشغيل: Set-ItemProperty -Path 'HKLM: \ System \ CurrentControlSet \ Control \ Terminal Server'-name "fDenyTSConnections" -Value 0
+    - تشغيل: Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
+    - تشغيل: Set-ItemProperty -Path 'HKLM: \ System \ CurrentControlSet \ Control \ Terminal Server \ WinStations \ RDP-Tcp' -name "UserAuthentication" -Value 1
+    - تشغيل: Set-LocalUser -Name "runneradmin" -Password (ConvertTo-SecureString -AsPlainText "P @ ssw0rd!" -Force)
+    - الاسم: إنشاء نفق
+      تشغيل:. \ ngrok \ ngrok.exe tcp 3389
